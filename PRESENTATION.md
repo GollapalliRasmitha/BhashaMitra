@@ -119,8 +119,8 @@ Official Sarvam translation docs: https://docs.sarvam.ai/api/api-reference/text/
 
 ✨ Translation appears instantly; audio generates in parallel. Fully responsive, dark mode, learn history.
 
-🔗 GitHub: [link]
-🎥 Demo: [link]
+🔗 GitHub: https://github.com/GollapalliRasmitha/BhashaMitra
+🎥 Demo: https://drive.google.com/file/d/1yPdVYLv344uMisNJ-40pbt22zzYmnZpk/view?usp=sharing
 
 #BuildInPublic #IndianLanguages #AIAssistant #FastAPI #SarvamAI #GnaniAI
 ```
@@ -134,8 +134,8 @@ BhashaMitra turns your voice into translation + pronunciation + meaning + speaki
 
 Powered by Gnani Prisma, Sarvam Mayura, Gemini & Gnani Timbre.
 
-🔗 GitHub: [link]
-🎥 Demo video: [link]
+🔗 GitHub: https://github.com/GollapalliRasmitha/BhashaMitra
+🎥 Demo video: https://drive.google.com/file/d/1yPdVYLv344uMisNJ-40pbt22zzYmnZpk/view?usp=sharing
 
 #BhashaMitra #LearnLanguages #IndianTech #AI #VoiceTranslation #BuildInPublic
 ```
@@ -150,8 +150,7 @@ BhashaMitra — speak in your language, understand and learn another. AI voice t
 
 ## 5. Submission checklist
 
-- [ ] Record the demo video following the script above
-- [ ] Upload video (YouTube unlisted / Drive) and paste the link everywhere `[link]` appears
+- [x] Record the demo video following the script above — https://drive.google.com/file/d/1yPdVYLv344uMisNJ-40pbt22zzYmnZpk/view?usp=sharing
 - [ ] Publish the LinkedIn + Instagram posts, then add their URLs to this file or your submission form
 - [ ] Keep the GitHub repo public: https://github.com/GollapalliRasmitha/BhashaMitra
 - [ ] Do a final test run: Telugu → Kannada, Telugu → Hindi, Telugu → Tamil

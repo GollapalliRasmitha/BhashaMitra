@@ -70,7 +70,7 @@ No typing. No copying sentences into Google Translate. Just talk.
 
 - **Live app (local):** `python -m uvicorn app:app --reload` → http://127.0.0.1:8000
 - **GitHub:** https://github.com/GollapalliRasmitha/BhashaMitra
-- **Demo video:** [add your video link]
+- **Demo video:** https://drive.google.com/file/d/1yPdVYLv344uMisNJ-40pbt22zzYmnZpk/view?usp=sharing
 
 ---
 
