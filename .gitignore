@@ -1,0 +1,6 @@
+.env
+__pycache__/
+generated_audio/
+api keys.txt
+debug_log.txt
+reply_audio.wav

@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BhashaMitra — Speak & Learn</title>
+<style>
+    :root {
+        --bg-1: #f3efff;
+        --bg-2: #ffe9f3;
+        --bg-3: #e3f0ff;
+        --card: rgba(255, 255, 255, 0.72);
+        --card-border: rgba(255, 255, 255, 0.85);
+        --text: #3b2a5a;
+        --text-soft: #7a6a9a;
+        --accent-1: #8b5cf6;
+        --accent-2: #d946ef;
+        --accent-3: #6366f1;
+        --shadow: 0 20px 50px -12px rgba(124, 58, 237, 0.25);
+        --shadow-soft: 0 8px 24px -8px rgba(124, 58, 237, 0.18);
+        --mic-glow: rgba(139, 92, 246, 0.45);
+        --wave-bar: #a78bfa;
+        --learn-bg: rgba(255, 255, 255, 0.92);
+    }
+
+    [data-theme="dark"] {
+        --bg-1: #1a1030;
+        --bg-2: #2a1440;
+        --bg-3: #141c3a;
+        --card: rgba(38, 26, 66, 0.72);
+        --card-border: rgba(139, 92, 246, 0.25);
+        --text: #efe9ff;
+        --text-soft: #b3a4d6;
+        --shadow: 0 20px 50px -12px rgba(0, 0, 0, 0.55);
+        --shadow-soft: 0 8px 24px -8px rgba(0, 0, 0, 0.4);
+        --mic-glow: rgba(167, 139, 250, 0.5);
+        --wave-bar: #c4b5fd;
+        --learn-bg: rgba(30, 20, 55, 0.95);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+        font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+        color: var(--text);
+        background:
+            radial-gradient(1000px 500px at 15% -5%, var(--bg-2), transparent 60%),
+            radial-gradient(900px 500px at 90% 10%, var(--bg-3), transparent 60%),
+            linear-gradient(160deg, var(--bg-1), var(--bg-2) 55%, var(--bg-3));
+        background-attachment: fixed;
+        min-height: 100vh;
+        transition: background 0.4s ease;
+    }
+
+    /* ---------- Header ---------- */
+    header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 18px clamp(16px, 5vw, 56px);
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        backdrop-filter: blur(14px);
+        background: color-mix(in srgb, var(--bg-1) 70%, transparent);
+        border-bottom: 1px solid var(--card-border);
+    }
+
+    .brand { display: flex; align-items: center; gap: 12px; }
+
+    .logo {
+        width: 46px; height: 46px;
+        border-radius: 14px;
+        display: grid; place-items: center;
+        background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+        box-shadow: var(--shadow-soft);
+        flex-shrink: 0;
+    }
+
+    .brand h1 { font-size: 1.25rem; letter-spacing: 0.2px; }
+    .brand p { font-size: 0.72rem; color: var(--text-soft); }
+
+    .header-actions { display: flex; gap: 10px; align-items: center; }
+
+    .btn {
+        border: none; cursor: pointer;
+        font-weight: 600; font-size: 0.9rem;
+        padding: 10px 20px; border-radius: 999px;
+        transition: transform 0.2s, box-shadow 0.2s, background 0.3s;
+        color: #fff;
+        background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+        box-shadow: var(--shadow-soft);
+    }
+    .btn:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+    .btn.ghost {
+        background: var(--card);
+        color: var(--text);
+        border: 1px solid var(--card-border);
+        backdrop-filter: blur(10px);
+    }
+    .btn.small { padding: 8px 16px; font-size: 0.82rem; }
+
+    /* ---------- Hero ---------- */
+    .hero {
+        text-align: center;
+        padding: clamp(28px, 5vw, 56px) 20px 10px;
+    }
+    .hero h2 {
+        font-size: clamp(1.8rem, 4.5vw, 2.8rem);
+        background: linear-gradient(90deg, var(--accent-1), var(--accent-2), var(--accent-3));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+    .hero .tagline {
+        color: var(--text-soft);
+        letter-spacing: 3px;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        margin-top: 8px;
+    }
+
+    .globe-wrap {
+        position: relative;
+        width: min(340px, 80vw);
+        height: 220px;
+        margin: 10px auto 0;
+    }
+    .globe {
+        position: absolute; left: 50%; top: 62%;
+        transform: translate(-50%, -50%);
+        width: 190px; height: 190px;
+        border-radius: 50%;
+        background:
+            radial-gradient(circle at 32% 30%, rgba(255,255,255,0.95), rgba(255,255,255,0) 42%),
+            linear-gradient(135deg, #c4b5fd, #f0abfc 55%, #93c5fd);
+        box-shadow:
+            0 30px 60px -15px rgba(139, 92, 246, 0.55),
+            inset -18px -22px 50px rgba(99, 102, 241, 0.35);
+        animation: floaty 6s ease-in-out infinite;
+    }
+    .globe::before, .globe::after {
+        content: ""; position: absolute; inset: 0; border-radius: 50%;
+        border: 1px solid rgba(255,255,255,0.55);
+    }
+    .globe::before { transform: scale(0.72); }
+    .globe::after { transform: scale(0.45); }
+    .orbit {
+        position: absolute; left: 50%; top: 62%;
+        transform: translate(-50%, -50%);
+        width: 260px; height: 260px;
+        border: 1.5px dashed rgba(139, 92, 246, 0.35);
+        border-radius: 50%;
+        animation: spin 24s linear infinite;
+    }
+    .bubble {
+        position: absolute;
+        background: var(--card);
+        border: 1px solid var(--card-border);
+        backdrop-filter: blur(8px);
+        border-radius: 16px;
+        padding: 8px 14px;
+        font-weight: 700;
+        font-size: 0.9rem;
+        box-shadow: var(--shadow-soft);
+        animation: floaty 5s ease-in-out infinite;
+        white-space: nowrap;
+    }
+    .bubble small { display: block; font-weight: 500; font-size: 0.65rem; color: var(--text-soft); }
+    .b1 { top: 4%;  left: 6%;  animation-delay: 0.4s; }
+    .b2 { top: 0%;   right: 8%; animation-delay: 1.2s; }
+    .b3 { bottom: 6%; left: 10%; animation-delay: 2s; }
+    .b4 { bottom: 2%; right: 6%; animation-delay: 0.8s; }
+
+    @keyframes floaty {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+    @keyframes spin { to { transform: translate(-50%, -50%) rotate(360deg); } }
+
+    /* ---------- Main layout ---------- */
+    main {
+        max-width: 860px;
+        margin: 0 auto;
+        padding: 18px clamp(14px, 4vw, 32px) 80px;
+        display: flex;
+        flex-direction: column;
+        gap: 22px;
+    }
+
+    .glass {
+        background: var(--card);
+        border: 1px solid var(--card-border);
+        border-radius: 22px;
+        backdrop-filter: blur(16px);
+        box-shadow: var(--shadow);
+        padding: clamp(18px, 3vw, 28px);
+    }
+
+    /* ---------- Language selectors ---------- */
+    .langs {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        gap: 14px;
+        align-items: stretch;
+    }
+    .lang-box h3 {
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: var(--text-soft);
+        margin-bottom: 10px;
+    }
+    .lang-options {
+        display: flex; flex-wrap: wrap; gap: 8px;
+    }
+    .lang-pill {
+        border: 1.5px solid var(--card-border);
+        background: rgba(255,255,255,0.5);
+        color: var(--text);
+        border-radius: 999px;
+        padding: 8px 14px;
+        cursor: pointer;
+        font-size: 0.85rem;
+        font-weight: 600;
+        display: inline-flex; align-items: center; gap: 7px;
+        transition: all 0.2s;
+    }
+    [data-theme="dark"] .lang-pill { background: rgba(255,255,255,0.06); }
+    .lang-pill .native { font-weight: 500; opacity: 0.75; }
+    .lang-pill:hover { transform: translateY(-1px); border-color: var(--accent-1); }
+    .lang-pill.active {
+        background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+        border-color: transparent;
+        color: #fff;
+        box-shadow: var(--shadow-soft);
+    }
+    .lang-pill.disabled { opacity: 0.35; cursor: not-allowed; pointer-events: none; }
+
+    .swap-wrap { display: grid; place-items: center; }
+    .swap-btn {
+        width: 46px; height: 46px;
+        border-radius: 50%;
+        border: 1.5px solid var(--card-border);
+        background: var(--card);
+        color: var(--accent-1);
+        font-size: 1.2rem;
+        cursor: pointer;
+        backdrop-filter: blur(10px);
+        transition: transform 0.35s ease, box-shadow 0.2s;
+        box-shadow: var(--shadow-soft);
+    }
+    .swap-btn:hover { transform: rotate(180deg); box-shadow: var(--shadow); }
+
+    /* ---------- Mic section ---------- */
+    .mic-section { text-align: center; }
+    .mic-section h2 { font-size: 1.3rem; margin-bottom: 4px; }
+    .mic-section .hint { color: var(--text-soft); font-size: 0.9rem; margin-bottom: 22px; }
+
+    .mic-stage { position: relative; display: inline-block; }
+
+    .mic-ring {
+        position: absolute; inset: -14px;
+        border-radius: 50%;
+        border: 2px solid transparent;
+        pointer-events: none;
+    }
+    .recording .mic-ring.r1 { border-color: rgba(217, 70, 239, 0.5); animation: ringPulse 1.6s ease-out infinite; }
+    .recording .mic-ring.r2 { border-color: rgba(139, 92, 246, 0.4); animation: ringPulse 1.6s ease-out 0.5s infinite; }
+    @keyframes ringPulse {
+        0% { transform: scale(0.92); opacity: 1; }
+        100% { transform: scale(1.18); opacity: 0; }
+    }
+
+    .mic-btn {
+        width: 118px; height: 118px;
+        border-radius: 50%;
+        border: none;
+        cursor: pointer;
+        background: linear-gradient(135deg, var(--accent-1), var(--accent-2) 60%, var(--accent-3));
+        color: #fff;
+        font-size: 2.6rem;
+        display: grid; place-items: center;
+        box-shadow: 0 18px 45px -10px var(--mic-glow), var(--shadow-soft);
+        transition: transform 0.2s, box-shadow 0.2s;
+        position: relative;
+    }
+    .mic-btn:hover { transform: scale(1.05); }
+    .mic-btn:active { transform: scale(0.96); }
+    .recording .mic-btn {
+        background: linear-gradient(135deg, #ec4899, #d946ef);
+        animation: micPulse 1.2s ease-in-out infinite;
+    }
+    @keyframes micPulse {
+        0%, 100% { box-shadow: 0 0 0 0 rgba(236, 72, 153, 0.5), var(--shadow-soft); }
+        50% { box-shadow: 0 0 0 22px rgba(236, 72, 153, 0), var(--shadow-soft); }
+    }
+
+    .waveform {
+        display: none;
+        gap: 5px; align-items: center; justify-content: center;
+        height: 34px; margin-bottom: 14px;
+    }
+    .recording .waveform { display: flex; }
+    .waveform span {
+        width: 5px; border-radius: 4px;
+        background: linear-gradient(var(--accent-1), var(--accent-2));
+        animation: wave 0.9s ease-in-out infinite;
+    }
+    .waveform span:nth-child(1) { height: 12px; animation-delay: 0s; }
+    .waveform span:nth-child(2) { height: 22px; animation-delay: 0.15s; }
+    .waveform span:nth-child(3) { height: 30px; animation-delay: 0.3s; }
+    .waveform span:nth-child(4) { height: 18px; animation-delay: 0.45s; }
+    .waveform span:nth-child(5) { height: 26px; animation-delay: 0.6s; }
+    .waveform span:nth-child(6) { height: 14px; animation-delay: 0.75s; }
+    .waveform span:nth-child(7) { height: 20px; animation-delay: 0.9s; }
+    @keyframes wave {
+        0%, 100% { transform: scaleY(0.4); }
+        50% { transform: scaleY(1); }
+    }
+
+    #status {
+        margin-top: 16px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: var(--text-soft);
+        min-height: 1.4em;
+    }
+    #status.error { color: #e11d48; }
+    #status.success { color: #059669; }
+
+    /* ---------- Result cards ---------- */
+    #results { display: none; }
+
+    .result-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 14px;
+    }
+    .mini-card {
+        background: rgba(255,255,255,0.55);
+        border: 1px solid var(--card-border);
+        border-radius: 16px;
+        padding: 16px;
+    }
+    [data-theme="dark"] .mini-card { background: rgba(255,255,255,0.05); }
+    .mini-card h4 {
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 1.2px;
+        color: var(--text-soft);
+        margin-bottom: 8px;
+    }
+    .mini-card .big { font-size: 1.45rem; font-weight: 800; line-height: 1.35; }
+    .mini-card .mid { font-size: 1.05rem; font-weight: 600; color: var(--accent-1); }
+    .mini-card .body-text { font-size: 0.95rem; line-height: 1.55; }
+
+    .hero-translation {
+        grid-column: 1 / -1;
+        background: linear-gradient(135deg, rgba(139,92,246,0.12), rgba(217,70,239,0.1));
+        border: 1.5px solid rgba(139, 92, 246, 0.3);
+        border-radius: 18px;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    .hero-translation .lang-tag {
+        align-self: flex-start;
+        font-size: 0.72rem; font-weight: 700;
+        padding: 4px 12px; border-radius: 999px;
+        background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+        color: #fff;
+    }
+    .hero-translation .native-big { font-size: clamp(1.6rem, 4vw, 2.1rem); font-weight: 800; }
+    .hero-translation .actions { display: flex; gap: 10px; margin-top: 4px; flex-wrap: wrap; }
+
+    .icon-btn {
+        border: 1px solid var(--card-border);
+        background: var(--card);
+        color: var(--text);
+        border-radius: 999px;
+        padding: 7px 14px;
+        font-size: 0.8rem; font-weight: 600;
+        cursor: pointer;
+        display: inline-flex; align-items: center; gap: 6px;
+        transition: all 0.2s;
+    }
+    .icon-btn:hover { border-color: var(--accent-1); color: var(--accent-1); transform: translateY(-1px); }
+
+    .audio-row {
+        grid-column: 1 / -1;
+        display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+    }
+    .audio-row audio { flex: 1; min-width: 220px; border-radius: 12px; }
+    .audio-loading { color: var(--text-soft); font-size: 0.85rem; font-style: italic; }
+
+    .you-said {
+        grid-column: 1 / -1;
+        font-size: 0.9rem;
+        color: var(--text-soft);
+    }
+    .you-said b { color: var(--text); }
+
+    /* ---------- Learn panel ---------- */
+    .learn-panel {
+        position: fixed;
+        top: 0; right: -420px;
+        width: min(400px, 92vw);
+        height: 100vh;
+        background: var(--learn-bg);
+        border-left: 1px solid var(--card-border);
+        backdrop-filter: blur(20px);
+        z-index: 100;
+        padding: 24px;
+        overflow-y: auto;
+        transition: right 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+        box-shadow: var(--shadow);
+    }
+    .learn-panel.open { right: 0; }
+    .learn-panel h2 { font-size: 1.2rem; margin-bottom: 4px; }
+    .learn-panel .sub { color: var(--text-soft); font-size: 0.85rem; margin-bottom: 18px; }
+    .learn-item {
+        background: var(--card);
+        border: 1px solid var(--card-border);
+        border-radius: 14px;
+        padding: 14px;
+        margin-bottom: 12px;
+    }
+    .learn-item .l-native { font-size: 1.1rem; font-weight: 700; }
+    .learn-item .l-roman { color: var(--accent-1); font-weight: 600; font-size: 0.9rem; }
+    .learn-item .l-meaning { font-size: 0.85rem; color: var(--text-soft); margin-top: 4px; }
+    .learn-item .l-tip { font-size: 0.8rem; margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--card-border); color: var(--text-soft); }
+    .learn-empty { color: var(--text-soft); text-align: center; padding: 40px 10px; font-size: 0.9rem; }
+
+    /* ---------- Responsive ---------- */
+    @media (max-width: 640px) {
+        .langs { grid-template-columns: 1fr; }
+        .swap-wrap { justify-content: center; }
+        .swap-btn { transform: rotate(90deg); }
+        .swap-btn:hover { transform: rotate(270deg); }
+        .brand p { display: none; }
+        .header-actions .btn.ghost { padding: 8px 12px; font-size: 0.8rem; }
+    }
+</style>
+</head>
+<body>
+
+<header>
+    <div class="brand">
+        <div class="logo">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
+                <path d="M4 10v4M8 7v10M12 4v16M16 8v8M20 11v2" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/>
+            </svg>
+        </div>
+        <div>
+            <h1>BhashaMitra</h1>
+            <p>Speak Your Language. Understand Every Language. Learn Without Limits.</p>
+        </div>
+    </div>
+    <div class="header-actions">
+        <button class="btn ghost small" onclick="toggleTheme()" id="themeBtn">🌙</button>
+        <button class="btn small" onclick="toggleLearn()">📚 Learn</button>
+    </div>
+</header>
+
+<section class="hero">
+    <h2>Your Voice, Across Languages</h2>
+    <div class="tagline">Speak • Translate • Learn</div>
+    <div class="globe-wrap">
+        <div class="orbit"></div>
+        <div class="globe"></div>
+        <div class="bubble b1">తెలుగు<small>Telugu</small></div>
+        <div class="bubble b2">ಕನ್ನಡ<small>Kannada</small></div>
+        <div class="bubble b3">தமிழ்<small>Tamil</small></div>
+        <div class="bubble b4">हिन्दी<small>Hindi</small></div>
+    </div>
+</section>
+
+<main>
+
+    <!-- Language selection -->
+    <section class="glass">
+        <div class="langs">
+            <div class="lang-box">
+                <h3>From Language</h3>
+                <div class="lang-options" id="fromOptions"></div>
+            </div>
+            <div class="swap-wrap">
+                <button class="swap-btn" onclick="swapLanguages()" title="Swap languages">⇄</button>
+            </div>
+            <div class="lang-box">
+                <h3>To Language</h3>
+                <div class="lang-options" id="toOptions"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Microphone -->
+    <section class="glass mic-section">
+        <h2>Speak naturally — we handle the rest</h2>
+        <div class="hint">Tap the microphone and say something in your selected language.</div>
+
+        <div class="waveform" aria-hidden="true">
+            <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+        </div>
+
+        <div class="mic-stage" id="micStage">
+            <div class="mic-ring r1"></div>
+            <div class="mic-ring r2"></div>
+            <button class="mic-btn" id="recordBtn" onclick="toggleRecord()" aria-label="Start speaking">🎙️</button>
+        </div>
+
+        <div id="status">Tap to Speak</div>
+    </section>
+
+    <!-- Results -->
+    <section class="glass" id="results">
+        <div class="you-said">🗣️ You said: <b id="userSaid"></b> <span id="detectedLang" style="opacity:.7"></span></div>
+
+        <div class="result-grid">
+            <div class="hero-translation">
+                <span class="lang-tag" id="targetTag">Kannada</span>
+                <div class="native-big" id="nativeReply"></div>
+                <div class="actions">
+                    <button class="icon-btn" onclick="playTranslationAudio()">🔊 Play</button>
+                    <button class="icon-btn" onclick="copyText('nativeReply')">📋 Copy</button>
+                </div>
+            </div>
+
+            <div class="mini-card">
+                <h4>Roman Pronunciation</h4>
+                <div class="mid" id="romanReply"></div>
+            </div>
+
+            <div class="mini-card">
+                <h4>English Meaning</h4>
+                <div class="body-text" id="englishMeaning"></div>
+            </div>
+
+            <div class="mini-card">
+                <h4>Detected Intent</h4>
+                <div class="body-text" id="detectedIntent"></div>
+            </div>
+
+            <div class="mini-card">
+                <h4>Suggested Next Sentence</h4>
+                <div class="body-text" id="suggestedNextNative" style="font-weight:600"></div>
+                <div class="mid" id="suggestedNextRoman" style="font-size:.9rem; margin-top:4px"></div>
+                <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap; align-items:center">
+                    <button class="icon-btn" onclick="playSuggestedAudio()">🔊 Play</button>
+                    <button class="icon-btn" onclick="copyText('suggestedNextNative')">📋 Copy</button>
+                    <span id="suggestedAudioStatus" class="audio-loading"></span>
+                </div>
+                <audio id="suggestedPlayer" controls style="display:none; width:100%; margin-top:10px"></audio>
+            </div>
+
+            <div class="mini-card" style="grid-column: 1 / -1">
+                <h4>💡 Learning Tip</h4>
+                <div class="body-text" id="coachTip"></div>
+            </div>
+
+            <div class="audio-row">
+                <span id="audioStatus" class="audio-loading"></span>
+                <audio id="audioPlayer" controls style="display:none"></audio>
+            </div>
+        </div>
+    </section>
+
+</main>
+
+<!-- Learn panel -->
+<aside class="learn-panel" id="learnPanel">
+    <h2>📚 Your Learning</h2>
+    <div class="sub">Sentences you've translated, saved on this device.</div>
+    <div id="learnList"></div>
+</aside>
+
+<script>
+    /* ================= Language data ================= */
+    const LANGUAGES = {
+        "te-IN": { name: "Telugu",  native: "తెలుగు", flag: "🇮🇳" },
+        "kn-IN": { name: "Kannada", native: "ಕನ್ನಡ",   flag: "🇮🇳" },
+        "hi-IN": { name: "Hindi",   native: "हिन्दी",  flag: "🇮🇳" },
+        "ta-IN": { name: "Tamil",   native: "தமிழ்",   flag: "🇮🇳" },
+        "en-IN": { name: "English", native: "English", flag: "🇮🇳" },
+    };
+
+    let sourceLang = "te-IN";
+    let targetLang = "kn-IN";
+
+    /* ================= Theme ================= */
+    function toggleTheme() {
+        const html = document.documentElement;
+        const dark = html.getAttribute("data-theme") === "dark";
+        html.setAttribute("data-theme", dark ? "light" : "dark");
+        document.getElementById("themeBtn").innerText = dark ? "🌙" : "☀️";
+        localStorage.setItem("bm_theme", dark ? "light" : "dark");
+    }
+    (function initTheme() {
+        if (localStorage.getItem("bm_theme") === "dark") {
+            document.documentElement.setAttribute("data-theme", "dark");
+            document.getElementById("themeBtn").innerText = "☀️";
+        }
+    })();
+
+    /* ================= Language selectors ================= */
+    function renderLangOptions() {
+        ["from", "to"].forEach(side => {
+            const container = document.getElementById(side + "Options");
+            const current = side === "from" ? sourceLang : targetLang;
+            const other = side === "from" ? targetLang : sourceLang;
+            container.innerHTML = "";
+            Object.entries(LANGUAGES).forEach(([code, lang]) => {
+                const btn = document.createElement("button");
+                btn.className = "lang-pill" + (code === current ? " active" : "") + (code === other ? " disabled" : "");
+                btn.innerHTML = `${lang.flag} ${lang.name} <span class="native">${lang.native}</span>`;
+                btn.onclick = () => setLanguage(side, code);
+                container.appendChild(btn);
+            });
+        });
+    }
+
+    function setLanguage(side, code) {
+        if (side === "from") sourceLang = code; else targetLang = code;
+        renderLangOptions();
+    }
+
+    function swapLanguages() {
+        [sourceLang, targetLang] = [targetLang, sourceLang];
+        renderLangOptions();
+    }
+
+    renderLangOptions();
+
+    /* ================= Learn panel ================= */
+    function toggleLearn() {
+        document.getElementById("learnPanel").classList.toggle("open");
+        renderLearn();
+    }
+
+    function getHistory() {
+        try { return JSON.parse(localStorage.getItem("bm_history") || "[]"); }
+        catch { return []; }
+    }
+
+    function saveHistory(data) {
+        const history = getHistory();
+        history.unshift({
+            time: new Date().toLocaleString(),
+            user_said: data.user_said,
+            detected_lang: data.detected_lang,
+            target_lang: targetLang,
+            reply_native: data.ai_reply.reply_native,
+            reply_roman: data.ai_reply.reply_roman,
+            english_meaning: data.ai_reply.english_meaning,
+            coaching_tip: data.ai_reply.coaching_tip,
+        });
+        localStorage.setItem("bm_history", JSON.stringify(history.slice(0, 50)));
+    }
+
+    function renderLearn() {
+        const list = document.getElementById("learnList");
+        const history = getHistory();
+        if (!history.length) {
+            list.innerHTML = '<div class="learn-empty">No translations yet.<br>Translate something and it will appear here.</div>';
+            return;
+        }
+        list.innerHTML = history.map(item => `
+            <div class="learn-item">
+                <div class="l-native">${escapeHtml(item.reply_native)}</div>
+                <div class="l-roman">${escapeHtml(item.reply_roman)}</div>
+                <div class="l-meaning">${escapeHtml(item.english_meaning)} · ${escapeHtml(item.detected_lang)} → ${escapeHtml(item.target_lang)}</div>
+                ${item.coaching_tip ? `<div class="l-tip">💡 ${escapeHtml(item.coaching_tip)}</div>` : ""}
+            </div>`).join("");
+    }
+
+    function escapeHtml(s) {
+        return String(s ?? "").replace(/[&<>"']/g, c => ({
+            "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+        }[c]));
+    }
+
+    /* ================= Recording ================= */
+    let audioContext, mediaStream, scriptProcessor;
+    let audioData = [];
+    let isRecording = false;
+    let lastResult = null;
+
+    const statusEl = document.getElementById("status");
+    const micStage = document.getElementById("micStage");
+    const recordBtn = document.getElementById("recordBtn");
+
+    function setStatus(text, cls) {
+        statusEl.innerText = text;
+        statusEl.className = cls || "";
+    }
+
+    async function toggleRecord() {
+        if (!isRecording) {
+            audioData = [];
+            try {
+                mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            } catch (err) {
+                setStatus("Microphone access denied or not found.", "error");
+                return;
+            }
+
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const source = audioContext.createMediaStreamSource(mediaStream);
+            scriptProcessor = audioContext.createScriptProcessor(4096, 1, 1);
+
+            scriptProcessor.onaudioprocess = (e) => {
+                if (!isRecording) return;
+                audioData.push(new Float32Array(e.inputBuffer.getChannelData(0)));
+            };
+
+            source.connect(scriptProcessor);
+            scriptProcessor.connect(audioContext.destination);
+
+            isRecording = true;
+            micStage.classList.add("recording");
+            recordBtn.innerText = "⏹️";
+            setStatus("Recording... Tap to stop");
+        } else {
+            isRecording = false;
+            micStage.classList.remove("recording");
+            recordBtn.innerText = "🎙️";
+            setStatus("Processing your speech...", "");
+
+            mediaStream.getTracks().forEach(t => t.stop());
+            scriptProcessor.disconnect();
+
+            const sampleRate = audioContext.sampleRate;
+            if (audioContext.state !== "closed") await audioContext.close();
+
+            uploadAudio(exportWAV(audioData, sampleRate));
+        }
+    }
+
+    function exportWAV(buffers, sampleRate) {
+        let totalLength = 0;
+        for (let b of buffers) totalLength += b.length;
+        let merged = new Float32Array(totalLength);
+        let offset = 0;
+        for (let b of buffers) { merged.set(b, offset); offset += b.length; }
+
+        const buffer = new ArrayBuffer(44 + merged.length * 2);
+        const view = new DataView(buffer);
+        writeString(view, 0, "RIFF");
+        view.setUint32(4, 36 + merged.length * 2, true);
+        writeString(view, 8, "WAVE");
+        writeString(view, 12, "fmt ");
+        view.setUint32(16, 16, true);
+        view.setUint16(20, 1, true);
+        view.setUint16(22, 1, true);
+        view.setUint32(24, sampleRate, true);
+        view.setUint32(28, sampleRate * 2, true);
+        view.setUint16(32, 2, true);
+        view.setUint16(34, 16, true);
+        writeString(view, 36, "data");
+        view.setUint32(40, merged.length * 2, true);
+
+        let idx = 44;
+        for (let i = 0; i < merged.length; i++) {
+            let s = Math.max(-1, Math.min(1, merged[i]));
+            view.setInt16(idx, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
+            idx += 2;
+        }
+        return new Blob([view], { type: "audio/wav" });
+    }
+
+    function writeString(view, offset, string) {
+        for (let i = 0; i < string.length; i++) {
+            view.setUint8(offset + i, string.charCodeAt(i));
+        }
+    }
+
+    /* ================= API flow ================= */
+    async function uploadAudio(wavBlob) {
+        const formData = new FormData();
+        formData.append("audio", wavBlob, "recording.wav");
+        formData.append("target_lang", targetLang);
+        formData.append("source_lang", sourceLang);
+
+        try {
+            const res = await fetch("/api/process-voice", { method: "POST", body: formData });
+            const data = await res.json();
+
+            if (!res.ok) {
+                setStatus(data.error || "Error processing voice.", "error");
+                return;
+            }
+
+            lastResult = data;
+            renderResult(data);
+            saveHistory(data);
+
+            setStatus("Translation ready — generating audio...", "success");
+            requestTts(data.ai_reply.reply_native, targetLang, "audioPlayer", "audioStatus");
+
+        } catch (err) {
+            setStatus(err.message || "Network / Server error.", "error");
+        }
+    }
+
+    async function requestTts(text, language, playerId, statusId) {
+        const player = document.getElementById(playerId);
+        const statusBox = document.getElementById(statusId);
+        player.style.display = "none";
+        player.removeAttribute("src");
+        if (statusBox) statusBox.innerText = "Generating audio...";
+
+        try {
+            const res = await fetch("/api/tts", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ text, language })
+            });
+            const data = await res.json();
+
+            if (data.audio_url) {
+                player.src = data.audio_url + "?t=" + new Date().getTime();
+                player.style.display = "block";
+                if (statusBox) statusBox.innerText = "";
+                player.play().catch(() => {});
+                if (playerId === "audioPlayer") {
+                    setStatus("Ready — tap the mic to speak again", "success");
+                }
+            } else {
+                if (statusBox) statusBox.innerText = data.audio_error || "Audio unavailable.";
+                if (playerId === "audioPlayer") {
+                    setStatus("Translation ready — audio unavailable", "error");
+                }
+            }
+        } catch (err) {
+            if (statusBox) statusBox.innerText = "Audio request failed: " + err.message;
+            if (playerId === "audioPlayer") {
+                setStatus("Translation ready — audio unavailable", "error");
+            }
+        }
+    }
+
+    function renderResult(data) {
+        document.getElementById("results").style.display = "block";
+        document.getElementById("userSaid").innerText = data.user_said;
+        document.getElementById("detectedLang").innerText =
+            "(detected: " + (data.detected_lang || "unknown") + ")";
+        document.getElementById("targetTag").innerText =
+            LANGUAGES[targetLang] ? LANGUAGES[targetLang].name : targetLang;
+
+        const r = data.ai_reply;
+        document.getElementById("nativeReply").innerText = r.reply_native || "";
+        document.getElementById("romanReply").innerText = r.reply_roman || "";
+        document.getElementById("englishMeaning").innerText = r.english_meaning || "";
+        document.getElementById("detectedIntent").innerText = r.detected_intent || "";
+        document.getElementById("suggestedNextNative").innerText = r.suggested_next_turn_native || "";
+        document.getElementById("suggestedNextRoman").innerText = r.suggested_next_turn_roman || "";
+        document.getElementById("coachTip").innerText = r.coaching_tip || "";
+
+        document.getElementById("results").scrollIntoView({ behavior: "smooth", block: "nearest" });
+        setStatus("Ready — tap the mic to speak again", "success");
+    }
+
+    function playTranslationAudio() {
+        const player = document.getElementById("audioPlayer");
+        if (player.src) player.play().catch(() => {});
+        else if (lastResult) requestTts(lastResult.ai_reply.reply_native, targetLang, "audioPlayer", "audioStatus");
+    }
+
+    function playSuggestedAudio() {
+        const text = document.getElementById("suggestedNextNative").innerText.trim();
+        if (text) requestTts(text, targetLang, "suggestedPlayer", "suggestedAudioStatus");
+    }
+
+    function copyText(id) {
+        const text = document.getElementById(id).innerText.trim();
+        if (text && navigator.clipboard) {
+            navigator.clipboard.writeText(text).catch(() => {});
+        }
+    }
+</script>
+
+</body>
+</html>
