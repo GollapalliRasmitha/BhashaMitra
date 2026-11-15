@@ -79,13 +79,14 @@ def normalize_language_code(code):
     return f"{lang}-{region}"
 
 
-def sarvam_translate(text, source_language_code, target_language_code, output_script):
+def sarvam_translate(text, source_language_code, target_language_code, output_script,
+                     mode="modern-colloquial"):
     payload = {
         "input": text,
         "source_language_code": source_language_code,
         "target_language_code": target_language_code,
         "model": "mayura:v1",
-        "mode": "modern-colloquial",
+        "mode": mode,
         "output_script": output_script,
     }
     headers = {
@@ -380,6 +381,11 @@ async def process_voice(
     else:
         source_lang = detected_source if detected_source in MAYURA_LANGUAGES else "auto"
 
+    # English sources get formal mode so Mayura doesn't code-mix English
+    # words into the target language; Indic sources stay colloquial.
+    effective_source = requested_source or detected_source
+    translation_mode = "formal" if effective_source == "en-IN" else "modern-colloquial"
+
     try:
         # Run the two Sarvam calls and the Gemini metadata call in parallel
         # so the user waits for the slowest one, not the sum of all three.
@@ -390,6 +396,7 @@ async def process_voice(
                 source_language_code=source_lang,
                 target_language_code=target_lang,
                 output_script="fully-native",
+                mode=translation_mode,
             )
             roman_future = pool.submit(
                 sarvam_translate,
@@ -397,6 +404,7 @@ async def process_voice(
                 source_language_code=source_lang,
                 target_language_code=target_lang,
                 output_script="roman",
+                mode=translation_mode,
             )
             meta_future = pool.submit(
                 fetch_learning_metadata,
